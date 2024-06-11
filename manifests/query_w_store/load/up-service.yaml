@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/component: blackbox-prober
+    app.kubernetes.io/instance: thanos-bench
+    app.kubernetes.io/name: up
+    app.kubernetes.io/part-of: thanos-bench
+  name: up
+  namespace: {{ .Env.NAMESPACE }}
+spec:
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+  selector:
+    app.kubernetes.io/component: blackbox-prober
+    app.kubernetes.io/instance: thanos-bench
+    app.kubernetes.io/name: up
+    app.kubernetes.io/part-of: thanos-bench

@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: avalanche
+    app.kubernetes.io/name: avalanche-remote-writer
+    app.kubernetes.io/part-of: thanos-bench
+  name: avalanche-remote-writer
+  namespace: {{ .Env.NAMESPACE }}
+spec:
+  replicas: {{ .Env.AVALANCHE_REPLICAS }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: avalanche
+      app.kubernetes.io/name: avalanche-remote-writer
+      app.kubernetes.io/part-of: thanos-bench
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: avalanche
+        app.kubernetes.io/name: avalanche-remote-writer
+        app.kubernetes.io/part-of: thanos-bench
+    spec:
+      containers:
+        - args:
+            - --metric-count=1
+            - --series-count=8333
+            - --label-count=10
+            - --remote-url=http://thanos-receive-default.{{ .Env.NAMESPACE }}.svc.cluster.local:19291/api/v1/receive
+            - --value-interval=30
+            - --series-interval=315360000
+            - --metric-interval=315360000
+            - --remote-requests-count=10000000
+            - --remote-write-interval=10s
+            - --remote-tenant-header=THANOS-TENANT
+            - --remote-tenant=1C927CAC-1163-4649-A36D-DCE4F47C7C5A
+          image: quay.io/observatorium/avalanche:make-tenant-header-configurable-2021-10-07-0a2cbf5
+          name: avalanche-remote-writer
+          resources:
+            limits:
+              cpu: "8"
+              memory: "15Gi"

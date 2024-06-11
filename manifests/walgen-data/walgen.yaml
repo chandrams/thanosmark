@@ -1,0 +1,37 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: thanos-walgen
+  namespace: {{ .Env.NAMESPACE }}
+spec:
+  template:
+    spec:
+      containers:
+      - command: ["/bin/sh","-c"]
+        args:
+        - mkdir -p /var/thanosbench/data && thanosbench walgen --config-file=/etc/thanos/config.yaml --output.dir=/var/thanosbench/data
+        name: thanos-bench
+        image: quay.io/samukher/thanosbench:with-user
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+          - mountPath: /var/thanosbench
+            name: storage
+            readOnly: false
+          - mountPath: /etc/thanos/
+            name: config
+            readOnly: true
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsUser: 0
+          runAsNonRoot: false
+      volumes:
+        - name: storage
+          persistentVolumeClaim:
+            claimName: walgen
+        - name: config
+          configMap:
+            name: thanos-walgen
+      restartPolicy: Never
+      serviceAccountName: thanos-walgen
+  backoffLimit: 1
+

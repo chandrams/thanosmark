@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: thanos-stress
+  name: thanos-stress
+  namespace: {{ .Env.NAMESPACE }}
+spec:
+  replicas: {{ .Env.STRESS_REPLICAS }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: thanos-stress
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: thanos-stress
+    spec:
+      containers:
+        - command: ["/bin/sh","-c"]
+          args:
+          - thanosbench stress --workers={{ .Env.WORKERS }} --query.look-back={{ .Env.LOOKBACK }} thanos-receive-default.{{ .Env.NAMESPACE }}.svc.cluster.local:10901
+          name: thanos-stress
+          image: quay.io/samukher/thanosbench:with-user
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsUser: 0
+            runAsNonRoot: false
+      nodeSelector:
+        kubernetes.io/os: linux
+      serviceAccountName: thanos-stress
+      terminationGracePeriodSeconds: 120

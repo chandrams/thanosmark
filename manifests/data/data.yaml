@@ -1,0 +1,37 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: thanos-block-create
+  namespace: {{ .Env.NAMESPACE }}
+spec:
+  template:
+    spec:
+      containers:
+      - command: ["/bin/sh","-c"]
+        args:
+        - (thanosbench block plan -p {{ .Env.PROFILE }} --labels 'cluster="eu-1"' --labels 'replica="0"' --max-time="{{ .Env.MAXTIME }}" | thanosbench block gen --output.dir=/var/thanosbench --objstore.config-file=/var/objstore/thanos.yaml)
+        name: thanos-bench
+        image: quay.io/samukher/thanosbench:with-user
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+          - mountPath: /var/objstore
+            name: objstore-config
+            readOnly: true
+          - mountPath: /var/thanosbench
+            name: storage
+            readOnly: false
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsUser: 0
+          runAsNonRoot: false
+      volumes:
+        - name: objstore-config
+          secret:
+            secretName: thanos-object-storage
+        - name: storage
+          persistentVolumeClaim:
+            claimName: thanosbench
+      restartPolicy: Never
+      serviceAccountName: thanos-bench
+  backoffLimit: 1
+

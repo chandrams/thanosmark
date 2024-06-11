@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: thanos-walgen
+  namespace: {{ .Env.NAMESPACE }}
+data:
+  config.yaml: |-
+    inputseries:
+    - type: "gauge"
+      characteristics:
+        jitter: 20
+        scrapeInterval: 15000000000
+        changeInterval: 3600000000000
+        max: 200000000
+        min: 100000000
+      result:
+        resultType: "vector"
+        result:
+          - metric:
+              __name__: "kube_pod_container_resource_limits_memory_bytes"
+              cluster: "eu1"
+              container: "addon-resizer"
+              instance: "172.17.0.9:8080"
+              job: "kube-state-metrics"
+              namespace: "kube-system"
+              node: "node1"
+              pod: "kube-state-metrics-68f6cc566c-vp566"
+            value: 1
+            timestamp: 0
+      replicate: 2
+    retention: 3600
+    scrapeinterval: 15

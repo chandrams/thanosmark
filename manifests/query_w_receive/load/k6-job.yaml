@@ -1,0 +1,117 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: rhobs-load-test
+  namespace: {{ .Env.NAMESPACE }}
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: load-test
+        imagePullPolicy: Always
+        image: quay.io/philipgough/k6:latest
+        env:
+          - name: TENANT
+            valueFrom:
+              configMapKeyRef:
+                name: load-test-config
+                key: tenant
+          - name: SCHEME
+            valueFrom:
+              configMapKeyRef:
+                name: load-test-config
+                key: scheme
+          - name: QUERY_URL
+            valueFrom:
+              configMapKeyRef:
+                name: load-test-config
+                key: query_url
+          - name: REMOTE_WRITE_URL
+            valueFrom:
+              configMapKeyRef:
+                name: load-test-config
+                key: remote_write_url
+          - name: READ_REQUEST_RATE
+            valueFrom:
+              configMapKeyRef:
+                name: load-test-config
+                key: read_request_rate
+          - name: WRITE_REQUEST_RATE
+            valueFrom:
+              configMapKeyRef:
+                name: load-test-config
+                key: write_request_rate
+          - name: WRITE_SERIES_PER_REQUEST
+            valueFrom:
+              configMapKeyRef:
+                name: load-test-config
+                key: write_series_per_request
+          - name: DURATION_MINUTES
+            valueFrom:
+              configMapKeyRef:
+                name: load-test-config
+                key: duration_minutes
+          - name: RAMP_UP_MINUTES
+            valueFrom:
+              configMapKeyRef:
+                name: load-test-config
+                key: ramp_up_minutes
+          - name: RAMP_DOWN_MINUTES
+            valueFrom:
+              configMapKeyRef:
+                name: load-test-config
+                key: ramp_down_minutes
+          - name: SCRAPE_INTERVAL_SECONDS
+            valueFrom:
+              configMapKeyRef:
+                name: load-test-config
+                key: scrape_interval_seconds
+          - name: HA_CLUSTERS
+            valueFrom:
+              configMapKeyRef:
+                name: load-test-config
+                key: ha_clusters
+          - name: HA_REPLICAS
+            valueFrom:
+              configMapKeyRef:
+                name: load-test-config
+                key: ha_clusters
+          - name: LABEL
+            value: 'run_id'
+          - name: LABEL_VALUE
+            valueFrom:
+              configMapKeyRef:
+                name: load-test-config
+                key: run-identifier
+          - name: K6_PROMETHEUS_USER
+            valueFrom:
+              secretKeyRef:
+                name: remote-write-secret
+                key: username
+                optional: true
+          - name: K6_PROMETHEUS_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: remote-write-secret
+                key: password
+                optional: true
+          - name: K6_PROMETHEUS_RW_SERVER_URL
+            valueFrom:
+              secretKeyRef:
+                name: remote-write-secret
+                key: url
+                optional: true
+          - name: K6_PROMETHEUS_FLUSH_PERIOD
+            value: '30s'
+        command:
+            - /bin/sh
+            - -c
+            - >
+                if [ -z ${K6_PROMETHEUS_RW_SERVER_URL} ];
+                then
+                   ./k6 run ./load.js -q --tag $(LABEL)=$(LABEL_VALUE)
+                else
+                   ./k6 run ./load.js -o experimental-prometheus-rw -q --tag $(LABEL)=$(LABEL_VALUE)
+                fi
