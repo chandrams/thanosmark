@@ -4,23 +4,23 @@
 export $(grep -v '^#' .env | xargs)
 
 while test $# -gt 0; do
-    case "$1" in
+  case "$1" in
     --profile*)
-        export PROFILE=$(echo $1 | sed -e 's/^[^=]*=//g')
-        shift
-        ;;
+      export PROFILE=$(echo $1 | sed -e 's/^[^=]*=//g')
+      shift
+      ;;
     -d | --deploy)
-        shift
-        deploydir "./manifests/data"
-        shift
-        ;;
+      shift
+      deploydir "./manifests/data"
+      shift
+      ;;
     -ud | --undeploy)
-        shift
-        undeploydir "./manifests/data"
-        shift
-        ;;
+      shift
+      undeploydir "./manifests/data"
+      shift
+      ;;
     *)
-        break
-        ;;
-    esac
+      break
+      ;;
+  esac
 done

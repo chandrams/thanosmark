@@ -23,3 +23,9 @@ $(GOMPLATE): $(BINGO_DIR)/gomplate.mod
 	@echo "(re)installing $(GOBIN)/gomplate-v4.0.0-pre-2"
 	@cd $(BINGO_DIR) && GOWORK=off $(GO) build -mod=mod -modfile=gomplate.mod -o=$(GOBIN)/gomplate-v4.0.0-pre-2 "github.com/hairyhenderson/gomplate/v4/cmd/gomplate"
 
+SHFMT := $(GOBIN)/shfmt-v3.7.0
+$(SHFMT): $(BINGO_DIR)/shfmt.mod
+	@# Install binary/ries using Go 1.14+ build command. This is using bwplotka/bingo-controlled, separate go module with pinned dependencies.
+	@echo "(re)installing $(GOBIN)/shfmt-v3.7.0"
+	@cd $(BINGO_DIR) && GOWORK=off $(GO) build -mod=mod -modfile=shfmt.mod -o=$(GOBIN)/shfmt-v3.7.0 "mvdan.cc/sh/v3/cmd/shfmt"
+
