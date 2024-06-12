@@ -31,7 +31,7 @@ spec:
             - --endpoint-type=metrics
             - --queries-file=/etc/up/queries.yaml
             - --endpoint-read=http://thanos-query-frontend.{{ .Env.NAMESPACE }}.svc.cluster.local:9090
-          image: quay.io/observatorium/up:master-2022-03-24-098c31a
+          image: {{ .Env.UP_IMG }}
           name: up
           ports:
             - containerPort: 8080

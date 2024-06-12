@@ -8,7 +8,7 @@ metadata:
   name: thanos-query
   namespace: {{ .Env.NAMESPACE }}
 spec:
-  replicas: 1
+  replicas: {{ .Env.QUERY_REPLICAS }}
   selector:
     matchLabels:
       app.kubernetes.io/component: query-layer

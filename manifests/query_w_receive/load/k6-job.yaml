@@ -11,7 +11,7 @@ spec:
       containers:
       - name: load-test
         imagePullPolicy: Always
-        image: quay.io/philipgough/k6:latest
+        image: {{ .Env.KSIX_IMG }}
         env:
           - name: TENANT
             valueFrom:

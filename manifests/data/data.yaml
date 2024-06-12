@@ -11,7 +11,7 @@ spec:
         args:
         - (thanosbench block plan -p {{ .Env.PROFILE }} --labels 'cluster="eu-1"' --labels 'replica="0"' --max-time="{{ .Env.MAXTIME }}" | thanosbench block gen --output.dir=/var/thanosbench --objstore.config-file=/var/objstore/thanos.yaml)
         name: thanos-bench
-        image: quay.io/samukher/thanosbench:with-user
+        image: {{ .Env.THANOSBENCH_IMG }}
         imagePullPolicy: IfNotPresent
         volumeMounts:
           - mountPath: /var/objstore

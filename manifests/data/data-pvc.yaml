@@ -10,4 +10,4 @@ spec:
   - ReadWriteOnce
   resources:
     requests:
-      storage: 15Gi
+      storage: {{ .Env.BLOCK_GEN_PVC_SIZE }}

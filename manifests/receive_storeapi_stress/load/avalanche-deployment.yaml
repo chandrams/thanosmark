@@ -23,20 +23,16 @@ spec:
     spec:
       containers:
         - args:
-            - --metric-count=1
-            - --series-count=8333
-            - --label-count=10
+            - --metric-count={{ .Env.METRIC_COUNT }}
+            - --series-count={{ .Env.SERIES_COUNT }}
+            - --label-count={{ .Env.LABEL_COUNT }}
             - --remote-url=http://thanos-receive-default.{{ .Env.NAMESPACE }}.svc.cluster.local:19291/api/v1/receive
-            - --value-interval=30
-            - --series-interval=315360000
-            - --metric-interval=315360000
-            - --remote-requests-count=10000000
-            - --remote-write-interval=10s
-            - --remote-tenant-header=THANOS-TENANT
-            - --remote-tenant=1C927CAC-1163-4649-A36D-DCE4F47C7C5A
-          image: quay.io/observatorium/avalanche:make-tenant-header-configurable-2021-10-07-0a2cbf5
+            - --value-interval={{ .Env.VALUE_INTERVAL }}
+            - --series-interval={{ .Env.SERIES_INTERVAL }}
+            - --metric-interval={{ .Env.METRIC_INTERVAL }}
+            - --remote-requests-count={{ .Env.REMOTE_REQUESTS_COUNT }}
+            - --remote-write-interval={{ .Env.REMOTE_WRITE_INTERVAL }}
+            - --remote-tenant-header={{ .Env.REMOTE_TENANT_HEADER }}
+            - --remote-tenant={{ .Env.REMOTE_TENANT }}            
+          image: {{ .Env.AVALANCHE_IMG }}
           name: avalanche-remote-writer
-          resources:
-            limits:
-              cpu: "8"
-              memory: "15Gi"

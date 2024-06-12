@@ -1,3 +1,4 @@
+# TODO(saswatamcode): Fix this, not quite sure why we stress job can't hit receive.
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -20,7 +21,7 @@ spec:
           args:
           - thanosbench stress --workers={{ .Env.WORKERS }} --query.look-back={{ .Env.LOOKBACK }} thanos-receive-default.{{ .Env.NAMESPACE }}.svc.cluster.local:10901
           name: thanos-stress
-          image: quay.io/samukher/thanosbench:with-user
+          image: {{ .Env.THANOSBENCH_IMG }}
           imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false

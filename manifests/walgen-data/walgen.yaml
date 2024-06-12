@@ -11,7 +11,7 @@ spec:
         args:
         - mkdir -p /var/thanosbench/data && thanosbench walgen --config-file=/etc/thanos/config.yaml --output.dir=/var/thanosbench/data
         name: thanos-bench
-        image: quay.io/samukher/thanosbench:with-user
+        image: {{ .Env.THANOSBENCH_IMG }}
         imagePullPolicy: IfNotPresent
         volumeMounts:
           - mountPath: /var/thanosbench
