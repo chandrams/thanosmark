@@ -9,7 +9,7 @@ spec:
       containers:
       - command: ["/bin/sh","-c"]
         args:
-        - (thanosbench block plan -p {{ .Env.PROFILE }} --labels 'cluster="eu-1"' --labels 'replica="0"' --max-time="{{ .Env.MAXTIME }}" | thanosbench block gen --output.dir=/var/thanosbench --objstore.config-file=/var/objstore/thanos.yaml)
+        - (thanosbench block plan -p {{ .Env.PROFILE }} --labels 'cluster={{ .Env.CLUSTER }}' --labels 'replica="0"' --max-time="{{ .Env.MAXTIME }}" | thanosbench block gen --output.dir=/var/thanosbench --objstore.config-file=/var/objstore/thanos.yaml)
         name: thanos-bench
         image: {{ .Env.THANOSBENCH_IMG }}
         imagePullPolicy: IfNotPresent
