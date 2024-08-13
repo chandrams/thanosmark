@@ -12,7 +12,7 @@ spec:
         - (thanosbench block plan -p {{ .Env.PROFILE }} --labels 'cluster_id="{{ .Env.CLUSTER }}"' --labels 'org_id="{{ .Env.ORG }}"' --max-time="{{ .Env.MAXTIME }}" | thanosbench block gen --output.dir=/var/thanosbench --objstore.config-file=/var/objstore/thanos.yaml)
         name: thanos-bench
         image: {{ .Env.THANOSBENCH_IMG }}
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         volumeMounts:
           - mountPath: /var/objstore
             name: objstore-config
